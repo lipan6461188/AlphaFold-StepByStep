@@ -1,0 +1,10 @@
+{
+    "A": {
+        "description": "1ajy_A mol:protein length:71  PUT3",
+        "sequence": "MSVACLSCRKRHIKCPGGNPCQKCVTSNAICEYLEPSKKIVVSTKYLQQLQKDLNDKTEENNRLKALLLER"
+    },
+    "B": {
+        "description": "1ajy_B mol:protein length:71  PUT3",
+        "sequence": "MSVACLSCRKRHIKCPGGNPCQKCVTSNAICEYLEPSKKIVVSTKYLQQLQKDLNDKTEENNRLKALLLER"
+    }
+}
