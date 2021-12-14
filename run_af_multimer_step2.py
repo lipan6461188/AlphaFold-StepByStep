@@ -35,7 +35,7 @@ import argparse
 
 os.environ['TF_FORCE_UNIFIED_MEMORY'] = '1'
 os.environ['XLA_PYTHON_CLIENT_MEM_FRACTION'] = '4.0'
-os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
+#os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 
 cur_path = pathlib.Path(__file__).parent.resolve()
 
@@ -72,7 +72,7 @@ def get_model_runner(i):
     model_config = config.model_config(model_names[i])
     model_config.model.num_ensemble_eval = 1
     model_config.model.num_recycle = args.num_recycle
-    model_config.model.global_config.subbatch_size = 1 # To save memory
+    #model_config.model.global_config.subbatch_size = 1 # To save memory
     model_params = data.get_model_haiku_params(model_name=model_names[i], data_dir=args.data_dir)
     model_runner = model.RunModel(model_config, model_params)
     return model_runner, model_params
@@ -93,7 +93,7 @@ print("Input length:", feature_dict['aatype'].shape[0], flush=True)
 ######################
 
 output_dir = args.output_dir
-assert os.path.exists(output_dir), "Error: --output_dir does not exists"
+assert os.path.exists(output_dir), f"Error: {output_dir} does not exists"
 
 models_to_run = [ int(i)-1 for i in args.models.split(',') ]
 for i in models_to_run:
@@ -101,7 +101,7 @@ for i in models_to_run:
 
 for i in models_to_run:
     unrelaxed_pdb_path = os.path.join(output_dir, f'unrelaxed_{model_names[i]}.pdb')
-    result_output_path = os.path.join(output_dir, f'result_{model_names[i]}.pkl')
+    result_output_path = os.path.join(output_dir, f'result_{model_names[i]}.pkl.gz')
     if os.path.exists(unrelaxed_pdb_path) and os.path.exists(result_output_path):
         print(f"Info: {unrelaxed_pdb_path} and {result_output_path} exists, please delete and try again", flush=True)
         continue
@@ -133,6 +133,6 @@ for i in models_to_run:
     ###########################
     ### Save as pkl file
     ###########################
-    pickle.dump(prediction_result, open(result_output_path, 'wb'), protocol=4)
+    pickle.dump(prediction_result, gzip.open(result_output_path, 'wb'), protocol=4)
 
 

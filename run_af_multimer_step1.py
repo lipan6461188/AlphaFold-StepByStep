@@ -20,6 +20,7 @@
 #
 
 import json
+import gzip
 import os
 import pathlib
 import pickle
@@ -60,7 +61,7 @@ parser.add_argument('--max_template_date', default='2021-11-03', type=str, help=
 
 args = parser.parse_args()
 
-features_output_path = os.path.join(args.output_dir, 'features.pkl')
+features_output_path = os.path.join(args.output_dir, 'features.pkl.gz')
 
 if os.path.exists(features_output_path):
     print(f"Info: {features_output_path} exists, please delete it and try again.")
@@ -170,6 +171,6 @@ feature_dict = data_pipeline.process(
         msa_output_dir = msa_output_dir,
         is_prokaryote = is_prokaryote)
 
-pickle.dump(feature_dict, open(features_output_path, 'wb'), protocol=4)
+pickle.dump(feature_dict, gzip.open(features_output_path, 'wb'), protocol=4)
 
 

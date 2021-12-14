@@ -49,6 +49,7 @@ parser = argparse.ArgumentParser(description='AlphaFold-Multimer pipeline')
 
 parser.add_argument('input_file', metavar='input_file', type=str, help='The fasta file to process, must contain multiple sequences.')
 parser.add_argument('output_dir', metavar='output_dir', type=str, help='Path to a directory that will store the results.')
+parser.add_argument('--max_template_date', default='2021-11-03', type=str, help="Maximun date to search for templates.")
 parser.add_argument('--is_prokaryote', action='store_true', help='The input protein sequences are from prokaryote species.')
 parser.add_argument('--skip_refine', action='store_true', help='Skip the refine step (step 3)')
 
@@ -65,7 +66,7 @@ step4_file = os.path.join(cur_path, 'run_af_multimer_step4.py')
 ### Step 1
 ########################
 
-cmd = f"python {step1_file} {args.input_file} {args.output_dir}"
+cmd = f"python {step1_file} {args.input_file} {args.output_dir} --max_template_date {args.max_template_date}"
 if args.is_prokaryote:
     cmd += ' --is_prokaryote'
 
@@ -78,7 +79,7 @@ if os.system(cmd) != 0:
 ### Step 2
 ########################
 
-cmd = f"python {step2_file} {args.output_dir}/features.pkl {args.output_dir}"
+cmd = f"python {step2_file} {args.output_dir}/features.pkl.gz {args.output_dir}"
 
 print("Run Step 2: Run models 1-5 to produce the unrelaxed models")
 if os.system(cmd) != 0:
@@ -94,7 +95,7 @@ if args.skip_refine:
     print("Step 3 skipped")
 else:
     for i in range(1, 6):
-        cmd = f"python {step3_file} {args.output_dir}/features.pkl {args.output_dir}/result_model_{i}_multimer.pkl {args.output_dir}/relaxed_model_{i}_multimer.pdb"
+        cmd = f"python {step3_file} {args.output_dir}/features.pkl.gz {args.output_dir}/result_model_{i}_multimer.pkl.gz {args.output_dir}/relaxed_model_{i}_multimer.pdb"
         if os.system(cmd) != 0:
             print("Step 3 Failed")
             exit(-1)
@@ -103,7 +104,7 @@ else:
 ### Step 4
 ########################
 
-model_pkls = ",".join([ f'{args.output_dir}/result_model_{i}_multimer.pkl' for i in range(1,6) ])
+model_pkls = ",".join([ f'{args.output_dir}/result_model_{i}_multimer.pkl.gz' for i in range(1,6) ])
 
 if args.skip_refine:
     model_pdbs = ",".join([ f'{args.output_dir}/unrelaxed_model_{i}_multimer.pdb' for i in range(1,6) ])
