@@ -15,7 +15,7 @@
 #
 #
 #  AlphaFold-Multimer Step 1-4
-#  Usage: run_af_multimer.py [--is_prokaryote] [--skip_refine] /path/to/input.fasta /path/to/output
+#  Usage: run_af_multimer.py [--skip_refine] /path/to/input.fasta /path/to/output
 #   Step 1: Search homologous sequences and templates
 #   Step 2: Run models 1-5 to produce the unrelaxed models
 #   Step 3: Relax models
@@ -50,7 +50,6 @@ parser = argparse.ArgumentParser(description='AlphaFold-Multimer pipeline')
 parser.add_argument('input_file', metavar='input_file', type=str, help='The fasta file to process, must contain multiple sequences.')
 parser.add_argument('output_dir', metavar='output_dir', type=str, help='Path to a directory that will store the results.')
 parser.add_argument('--max_template_date', default='2021-11-03', type=str, help="Maximun date to search for templates.")
-parser.add_argument('--is_prokaryote', action='store_true', help='The input protein sequences are from prokaryote species.')
 parser.add_argument('--skip_refine', action='store_true', help='Skip the refine step (step 3)')
 
 args = parser.parse_args()
@@ -67,8 +66,6 @@ step4_file = os.path.join(cur_path, 'run_af_multimer_step4.py')
 ########################
 
 cmd = f"python {step1_file} {args.input_file} {args.output_dir} --max_template_date {args.max_template_date}"
-if args.is_prokaryote:
-    cmd += ' --is_prokaryote'
 
 print("Run Step 1: Search homologous sequences and templates")
 if os.system(cmd) != 0:
@@ -95,7 +92,7 @@ if args.skip_refine:
     print("Step 3 skipped")
 else:
     for i in range(1, 6):
-        cmd = f"python {step3_file} {args.output_dir}/features.pkl.gz {args.output_dir}/result_model_{i}_multimer.pkl.gz {args.output_dir}/relaxed_model_{i}_multimer.pdb"
+        cmd = f"python {step3_file} {args.output_dir}/unrelaxed_model_{i}_multimer.pdb {args.output_dir}/relaxed_model_{i}_multimer.pdb"
         if os.system(cmd) != 0:
             print("Step 3 Failed")
             exit(-1)
@@ -117,5 +114,4 @@ print("Run Step 4: Sort models")
 if os.system(cmd) != 0:
     print("Step 4 Failed")
     exit(-1)
-
 

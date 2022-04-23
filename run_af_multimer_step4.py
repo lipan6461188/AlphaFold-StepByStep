@@ -120,6 +120,3 @@ for rank,i in enumerate(dec_order):
     plt.savefig( f"{output_dir}/model_{i+1}_plddt.png" )
     plt.close()
 
-
-
-

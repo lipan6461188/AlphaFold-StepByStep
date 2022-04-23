@@ -15,7 +15,7 @@
 #
 #
 #  AlphaFold-Multimer Step 1 -- Search homologous sequences and templates
-#  Usage: run_af_multimer_step1.py [--is_prokaryote] /path/to/input.fasta /path/to/output_dir
+#  Usage: run_af_multimer_step1.py /path/to/input.fasta /path/to/output_dir
 #
 #
 
@@ -56,7 +56,6 @@ parser = argparse.ArgumentParser(description='AlphaFold-Multimer Step 1 -- Searc
 
 parser.add_argument('input_file', metavar='input_file', type=str, help='The fasta file to process, must contain multiple sequences.')
 parser.add_argument('output_dir', metavar='output_dir', type=str, help='Path to a directory that will store the results.')
-parser.add_argument('--is_prokaryote', action='store_true', help='The input protein sequences are from prokaryote species.')
 parser.add_argument('--max_template_date', default='2021-11-03', type=str, help="Maximun date to search for templates.")
 
 args = parser.parse_args()
@@ -117,10 +116,7 @@ model_preset                = "multimer"
 benchmark                   = False
 use_precomputed_msas        = False
 use_small_bfd               = False
-is_prokaryote               = args.is_prokaryote
 MAX_TEMPLATE_HITS           = 20
-
-print(f"is_prokaryote: {is_prokaryote}")
 
 #################################
 ### Define searcher, featurizer and pipeline
@@ -168,8 +164,7 @@ if not os.path.exists(msa_output_dir):
 
 feature_dict = data_pipeline.process(
         input_fasta_path = args.input_file,
-        msa_output_dir = msa_output_dir,
-        is_prokaryote = is_prokaryote)
+        msa_output_dir = msa_output_dir)
 
 pickle.dump(feature_dict, gzip.open(features_output_path, 'wb'), protocol=4)
 
