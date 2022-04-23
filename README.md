@@ -94,11 +94,11 @@ AlphaFold2 (and AlphaFold-Multimer) running process is splited into four parts:
 
 #### predicted_aligned_error
 
-![1.png](examples/output/model_1_predicted_aligned_error.png)
+![1.png](examples/1ajy/model_1_predicted_aligned_error.png)
 
 #### pLDDT
 
-![2.png](examples/output/model_2_plddt.png)
+![2.png](examples/1ajy/model_2_plddt.png)
 
 #### Protein structure
 
